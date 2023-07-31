@@ -15,3 +15,8 @@ target_link_libraries(${PROJECT_NAME} glfw)
 
 add_subdirectory(deps/glad)
 target_link_libraries(${PROJECT_NAME} glad) 
+
+add_subdirectory(deps/spdlog)
+target_link_libraries(${PROJECT_NAME} spdlog)
+
+set_property(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} PROPERTY VS_STARTUP_PROJECT ${PROJECT_NAME})
