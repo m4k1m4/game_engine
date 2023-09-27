@@ -1,3 +1,4 @@
 # my_game_engine
-Any self-respecting C++ developer should write their own game engine. What to use in your projects Unreal Engine or Unity xD
-The name has not yet been invented  the name is just a working one.
+Every C++ developer should write their own engine. What to use in their projects Unreal Engine or Unity xD The name hasn't been thought of yet.
+
+Due to the recent events it is worth crossing out Unity or changing the name to Godot xD.
