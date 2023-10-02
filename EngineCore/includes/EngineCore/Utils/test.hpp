@@ -1,5 +1,5 @@
 namespace Engine {
 
-    void sayHello();
+    int checkGLFW();
 
 }
