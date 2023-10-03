@@ -1,12 +1,26 @@
 #include <iostream>
 
-#include <EngineCore/Utils/test.hpp>
+#include <memory>
+
+#include <EngineCore/Application.hpp>
+
+class MyApp : public Engine::Application
+{
+    virtual void on_update() override
+    {
+        std::cout << "Update frame: " << frame++ << std::endl;
+    }
+
+    int frame = 0;
+};
 
 int main() 
 {
-	std::cout << "Hello from Engine Editor" << std::endl;
+    auto myApp = std::make_unique<MyApp>();
 
-	Engine::checkGLFW();
+    int returnCode = myApp->start(1024, 768, "My first App");
 
 	std::cin.get();
+
+    return returnCode;
 }
