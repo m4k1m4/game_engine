@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.4...3.20 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.4...3.27 FATAL_ERROR) 
 
 set(EDITOR_PROJECT_NAME EngineEditor)
 
