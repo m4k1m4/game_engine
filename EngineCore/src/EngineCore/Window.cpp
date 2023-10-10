@@ -1,5 +1,6 @@
 #include "EngineCore/Window.hpp"
 #include "EngineCore/Log.hpp"
+#include "EngineCore/Rendering/OpenGL/ShaderProgram.hpp"
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -42,7 +43,7 @@ namespace Engine {
         "   frag_color = vec4(color, 1.0);"
         "}";
 
-    GLuint shader_program;
+    std::unique_ptr<ShaderProgram> p_shader_program;
     GLuint vao;
 
     Window::Window(std::string title, const unsigned int width, const unsigned int height)
@@ -132,21 +133,11 @@ namespace Engine {
             }
         );
 
-        GLuint vs = glCreateShader(GL_VERTEX_SHADER);
-        glShaderSource(vs, 1, &vertex_shader, nullptr);
-        glCompileShader(vs);
-
-        GLuint fs = glCreateShader(GL_FRAGMENT_SHADER);
-        glShaderSource(fs, 1, &fragment_shader, nullptr);
-        glCompileShader(fs);
-
-        shader_program = glCreateProgram();
-        glAttachShader(shader_program, vs);
-        glAttachShader(shader_program, fs);
-        glLinkProgram(shader_program);
-
-        glDeleteShader(vs);
-        glDeleteShader(fs);
+        p_shader_program = std::make_unique<ShaderProgram>(vertex_shader, fragment_shader);
+        if (!p_shader_program->isCompiled())
+        {
+            return false;
+        }
 
         GLuint points_vbo = 0;
         glGenBuffers(1, &points_vbo);
@@ -183,7 +174,7 @@ namespace Engine {
         glClearColor(m_background_color[0], m_background_color[1], m_background_color[2], m_background_color[3]);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        glUseProgram(shader_program);
+        p_shader_program->bind();
         glBindVertexArray(vao);
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
