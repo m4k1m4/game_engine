@@ -5,6 +5,7 @@
 #include "EngineCore/Rendering/OpenGL/VertexArray.hpp"
 #include "EngineCore/Rendering/OpenGL/IndexBuffer.hpp"
 #include "EngineCore/Camera.hpp"
+#include "EngineCore/Modules/UIModule.hpp"
 
 #include "EngineCore/Rendering/OpenGL/Renderer_OpenGL.hpp"
 
@@ -69,11 +70,6 @@ namespace Engine {
         : m_data({ std::move(title), width, height })
     {
         int resultCode = init();
-
-        IMGUI_CHECKVERSION();
-        ImGui::CreateContext();
-        ImGui_ImplOpenGL3_Init();
-        ImGui_ImplGlfw_InitForOpenGL(m_pWindow, true);
     }
 
     Window::~Window()
@@ -147,6 +143,7 @@ namespace Engine {
             }
         );
 
+        UIModule::on_window_create(m_pWindow);
 
         p_shader_program = std::make_unique<ShaderProgram>(vertex_shader, fragment_shader);
         if (!p_shader_program->isCompiled())
@@ -177,11 +174,7 @@ namespace Engine {
 
     void Window::shutdown()
     {
-        if (ImGui::GetCurrentContext())
-        {
-            ImGui::DestroyContext();
-        }
-
+        UIModule::on_window_close();
         glfwDestroyWindow(m_pWindow);
         glfwTerminate();
     }
@@ -190,24 +183,6 @@ namespace Engine {
     {
         Renderer_OpenGL::set_clear_color(m_background_color[0], m_background_color[1], m_background_color[2], m_background_color[3]);
         Renderer_OpenGL::clear();
-
-        ImGuiIO& io = ImGui::GetIO();
-        io.DisplaySize.x = static_cast<float>(get_width());
-        io.DisplaySize.y = static_cast<float>(get_height());
-
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame();
-
-        ImGui::Begin("Background Color Window");
-        ImGui::ColorEdit4("Background Color", m_background_color);
-        ImGui::SliderFloat3("scale", scale, 0.f, 2.f);
-        ImGui::SliderFloat("rotate", &rotate, 0.f, 360.f);
-        ImGui::SliderFloat3("translate", translate, -1.f, 1.f);
-
-        ImGui::SliderFloat3("camera position", camera_position, -10.f, 10.f);
-        ImGui::SliderFloat3("camera rotation", camera_rotation, 0, 360.f);
-        ImGui::Checkbox("Perspective camera", &perspective_camera);
 
         p_shader_program->bind();
 
@@ -237,10 +212,21 @@ namespace Engine {
 
         Renderer_OpenGL::draw(*p_vao);
 
+        UIModule::on_ui_draw_begin();
+        bool show = true;
+        UIModule::ShowExampleAppDockSpace(&show);
+        ImGui::ShowDemoWindow();
+        ImGui::Begin("Background Color Window");
+        ImGui::ColorEdit4("Background Color", m_background_color);
+        ImGui::SliderFloat3("scale", scale, 0.f, 2.f);
+        ImGui::SliderFloat("rotate", &rotate, 0.f, 360.f);
+        ImGui::SliderFloat3("translate", translate, -1.f, 1.f);
+        ImGui::SliderFloat3("camera position", camera_position, -10.f, 10.f);
+        ImGui::SliderFloat3("camera rotation", camera_rotation, 0, 360.f);
+        ImGui::Checkbox("Perspective camera", &perspective_camera);
         ImGui::End();
 
-        ImGui::Render();
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+        UIModule::on_ui_draw_end();
 
         glfwSwapBuffers(m_pWindow);
         glfwPollEvents();
