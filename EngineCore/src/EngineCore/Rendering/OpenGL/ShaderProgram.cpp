@@ -66,7 +66,7 @@ namespace Engine
         }
         else
         {
-            m_isCompiled = true;
+            m_is_compiled = true;
         }
 
         glDetachShader(m_id, vertex_shader_id);
@@ -90,28 +90,32 @@ namespace Engine
         glUseProgram(0);
     }
 
-    ShaderProgram& ShaderProgram::operator=(ShaderProgram&& shaderProgram)
+    ShaderProgram& ShaderProgram::operator=(ShaderProgram&& shader_program)
     {
         glDeleteProgram(m_id);
-        m_id = shaderProgram.m_id;
-        m_isCompiled = shaderProgram.m_isCompiled;
+        m_id = shader_program.m_id;
+        m_is_compiled = shader_program.m_is_compiled;
 
-        shaderProgram.m_id = 0;
-        shaderProgram.m_isCompiled = false;
+        shader_program.m_id = 0;
+        shader_program.m_is_compiled = false;
         return *this;
     }
 
-    ShaderProgram::ShaderProgram(ShaderProgram&& shaderProgram)
+    ShaderProgram::ShaderProgram(ShaderProgram&& shader_program)
+        : m_id(shader_program.m_id)
+        , m_is_compiled(shader_program.m_is_compiled)
     {
-        m_id = shaderProgram.m_id;
-        m_isCompiled = shaderProgram.m_isCompiled;
-
-        shaderProgram.m_id = 0;
-        shaderProgram.m_isCompiled = false;
+        shader_program.m_id = 0;
+        shader_program.m_is_compiled = false;
     }
 
-    void ShaderProgram::setMatrix4(const char* name, const glm::mat4& matrix) const
+    void ShaderProgram::set_matrix4(const char* name, const glm::mat4& matrix) const
     {
         glUniformMatrix4fv(glGetUniformLocation(m_id, name), 1, GL_FALSE, glm::value_ptr(matrix));
     }
-}
+
+    void ShaderProgram::set_int(const char* name, const int value) const
+    {
+        glUniform1i(glGetUniformLocation(m_id, name), value);
+    }
+} 

@@ -20,15 +20,16 @@ namespace Engine {
         if (m_update_view_matrix)
         {
             update_view_matrix();
+            m_update_view_matrix = false;
         }
         return m_view_matrix;
     }
 
     void Camera::update_view_matrix()
     {
-        const float roll_in_radians  = glm::radians(m_rotation.x);
+        const float roll_in_radians = glm::radians(m_rotation.x);
         const float pitch_in_radians = glm::radians(m_rotation.y);
-        const float yaw_in_radians   = glm::radians(m_rotation.z);
+        const float yaw_in_radians = glm::radians(m_rotation.z);
 
         const glm::mat3 rotate_matrix_x(1, 0, 0,
             0, cos(roll_in_radians), sin(roll_in_radians),
@@ -59,9 +60,9 @@ namespace Engine {
             float f = 10;
             float n = 0.1f;
             m_projection_matrix = glm::mat4(n / r, 0, 0, 0,
-                                            0, n / t, 0, 0,
-                                            0, 0, (-f - n) / (f - n), -1,
-                                            0, 0, -2 * f * n / (f - n), 0);
+                0, n / t, 0, 0,
+                0, 0, (-f - n) / (f - n), -1,
+                0, 0, -2 * f * n / (f - n), 0);
         }
         else
         {
@@ -70,9 +71,9 @@ namespace Engine {
             float f = 100;
             float n = 0.1f;
             m_projection_matrix = glm::mat4(1 / r, 0, 0, 0,
-                                            0, 1 / t, 0, 0,
-                                            0, 0, -2 / (f - n), 0,
-                                            0, 0, (-f - n) / (f - n), 1);
+                0, 1 / t, 0, 0,
+                0, 0, -2 / (f - n), 0,
+                0, 0, (-f - n) / (f - n), 1);
         }
     }
 
@@ -120,11 +121,11 @@ namespace Engine {
     }
 
     void Camera::add_movement_and_rotation(const glm::vec3& movement_delta,
-                                             const glm::vec3& rotation_delta)
+        const glm::vec3& rotation_delta)
     {
         m_position += m_direction * movement_delta.x;
-        m_position += m_right     * movement_delta.y;
-        m_position += m_up        * movement_delta.z;
+        m_position += m_right * movement_delta.y;
+        m_position += m_up * movement_delta.z;
         m_rotation += rotation_delta;
         m_update_view_matrix = true;
     }
