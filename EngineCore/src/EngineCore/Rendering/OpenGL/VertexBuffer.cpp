@@ -128,16 +128,4 @@ namespace Engine {
     {
         vertex_buffer.m_id = 0;
     }
-
-
-    void VertexBuffer::bind() const
-    {
-        glBindBuffer(GL_ARRAY_BUFFER, m_id);
-    }
-
-
-    void VertexBuffer::unbind()
-    {
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-    }
 }
